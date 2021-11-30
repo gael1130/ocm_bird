@@ -32,7 +32,29 @@ let index = 0,
 
 const render = () => {
   // the index is controlling the elements
+  // make the pipe and bird moving
   index++;
+
+  // background
+  // negative value because the index is adding at each loop so it will create the moving
+  // background illusion
+  // ((index * (speed / 2)) % canvas.width => create the move, modulo to limit the move
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -((index * (speed / 2)) % canvas.width) + canvas.width, 0, canvas.width, canvas.height);
+
+  // draw bird
+
+// starts at 432 because it is the end of the background image and beginning of bird
+// ... is used as spread operator, see here: https://dev.to/sagar/three-dots---in-javascript-26ci
+
+// first version, with no apparent animation
+  // ctx.drawImage(img, 432, 0, ...size, (canvas.width / 2) - size[0] / 2, flyHeight, ...size)
+
+// now I animate
+// Math.floor((index % 9) / 3 * size[1] => to select one of the 3 birds to animate
+  ctx.drawImage(img, 432, Math.floor((index % 9) / 3) * size[1], ...size, (canvas.width / 2) - size[0] / 2, flyHeight, ...size)
+  // this is the position of the bird. We center it with these operations
+  // set initial flyHeight (middle of screen - size of the bird)
+  flyHeight = (canvas.height / 2 - (size[1] / 2))
 
 
   // to relaunch the animation all the time. It creates a loop
