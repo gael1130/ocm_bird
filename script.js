@@ -1,3 +1,5 @@
+// I am at 40 mn: https://www.youtube.com/watch?v=eXKmDfa8qWU&t=1357s
+
 const canvas = document.getElementById('canvas');
 // ctx = context
 const ctx = canvas.getContext('2d');
@@ -19,6 +21,13 @@ const jump = -11.5;
 // constant equal to a tenth of the canvas to do what?
 const cTenth = (canvas.width / 10);
 
+// 34mn: adding obstacles
+// pipe settings
+const pipeWidth = 78;
+const pipeGap = 270;
+const pipeLoc = () => (Math.random() * (canvas.height - (pipeGap + pipeWidth) - pipeWidth)) + pipeWidth;
+
+
 // the variables, evolving during the game
 
 // creating the paralax effect, background moving slower than obstacles
@@ -29,6 +38,17 @@ let index = 0,
     pipes = [],
     flight,
     flyHeight;
+
+
+// setup for the beginning of the game
+const setup = () => {
+  currentScore = 0;
+  flight = jump;
+  flyHeight = (canvas.height / 2) - (size[1] / 2);
+
+  pipes = Array(3).fill().map((a, i) => [canvas.width + (i * (pipeGap + pipeWidth)), pipeLoc()]);
+  console.log(pipes);
+}
 
 const render = () => {
   // the index is controlling the elements
@@ -41,7 +61,20 @@ const render = () => {
   // ((index * (speed / 2)) % canvas.width => create the move, modulo to limit the move
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -((index * (speed / 2)) % canvas.width) + canvas.width, 0, canvas.width, canvas.height);
 
-  // draw bird
+  // second element to make the background run smoothly (23mn11)
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -((index * (speed / 2)) % canvas.width), 0, canvas.width, canvas.height);
+
+
+  // birds actions when the game is launched
+  if (gamePlaying) {
+    // cTenth => c for canvas and Tenth for 1/10th of the screen for the position
+    ctx.drawImage(img, 432, Math.floor((index % 9) / 3) * size[1], ...size, cTenth, flyHeight, ...size);
+    flight += gravity;
+    // the fly height is now the minimum of those 2 arguments
+    flyHeight = Math.min(flyHeight + flight, canvas.height - size[1]);
+
+  } else {
+      // draw bird
 
 // starts at 432 because it is the end of the background image and beginning of bird
 // ... is used as spread operator, see here: https://dev.to/sagar/three-dots---in-javascript-26ci
@@ -56,9 +89,24 @@ const render = () => {
   // set initial flyHeight (middle of screen - size of the bird)
   flyHeight = (canvas.height / 2 - (size[1] / 2))
 
+  // write in the canvas
+  ctx.fillText(`Best Score: ${bestScore}🍌`, 55, 245)
+  ctx.fillText(`Click to play`, 48, 535)
+  ctx.font = "bold 30px courier"
+
+  }
 
   // to relaunch the animation all the time. It creates a loop
   window.requestAnimationFrame(render);
 }
 
+setup();
 img.onload = render;
+
+// launch the game on click
+document.addEventListener('click', () => gamePlaying = true);
+
+// to make the bird appear when I click and play the game
+window.onclick = () => flight = jump;
+
+
