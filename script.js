@@ -141,5 +141,11 @@ img.onload = render;
 // launch the game on click
 document.addEventListener('click', () => gamePlaying = true);
 
+// also when a button is hit, request from yostaibibi#1734
+document.addEventListener('keyup', () => gamePlaying = true);
+
 // to make the bird appear when I click and play the game
 window.onclick = () => flight = jump;
+
+// also when a key is pressed, request from yostaibibi#1734
+window.onkeyup = () => flight = jump;
