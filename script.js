@@ -1,5 +1,3 @@
-// I am at 40 mn: https://www.youtube.com/watch?v=eXKmDfa8qWU&t=1357s
-
 const canvas = document.getElementById('canvas');
 // ctx = context
 const ctx = canvas.getContext('2d');
@@ -84,17 +82,54 @@ const render = () => {
 
 // now I animate
 // Math.floor((index % 9) / 3 * size[1] => to select one of the 3 birds to animate
-  ctx.drawImage(img, 432, Math.floor((index % 9) / 3) * size[1], ...size, (canvas.width / 2) - size[0] / 2, flyHeight, ...size)
+  ctx.drawImage(img, 432, Math.floor((index % 9) / 3) * size[1], ...size, (canvas.width / 2) - size[0] / 2, flyHeight, ...size);
   // this is the position of the bird. We center it with these operations
   // set initial flyHeight (middle of screen - size of the bird)
-  flyHeight = (canvas.height / 2 - (size[1] / 2))
+  flyHeight = (canvas.height / 2 - (size[1] / 2));
 
   // write in the canvas
-  ctx.fillText(`Best Score: ${bestScore}🍌`, 55, 245)
-  ctx.fillText(`Click to play`, 48, 535)
-  ctx.font = "bold 30px courier"
+  ctx.fillText(`Best Score: ${bestScore}🍌`, 55, 245);
+  ctx.fillText(`Click to play`, 48, 535);
+  ctx.font = "bold 30px courier";
 
   }
+
+  // pipe display
+  if (gamePlaying) {
+    pipes.map(pipe => {
+      pipe[0] -= speed;
+
+      // top pipe
+      ctx.drawImage(img, 432, 588 - pipe[1], pipeWidth, pipe[1], pipe[0], 0, pipeWidth, pipe[1]);
+      // bottom pipe
+      ctx.drawImage(img, 432 + pipeWidth, 108, pipeWidth, canvas.height - pipe[1] + pipeGap, pipe[0], pipe[1] + pipeGap, pipeWidth, canvas.height - pipe[1] + pipeGap);
+
+      if (pipe[0] <= -pipeWidth) {
+        currentScore++;
+        bestScore = Math.max(bestScore, currentScore);
+
+        // remove pipe + create new pipe
+        pipes = [...pipes.slice(1), [pipes[pipes.length-1][0] + pipeGap + pipeWidth, pipeLoc()]];
+        console.log(pipes);
+      }
+
+      // if hit pipe, end game
+      // cTenth is the location of the bird
+      if ([
+        pipe[0] <= cTenth + size[0],
+        pipe[0] + pipeWidth >= cTenth,
+        pipe[1] > flyHeight || pipe[1] + pipeGap < flyHeight + size[1]
+      ].every(elem => elem)) {
+        gamePlaying = false;
+        setup();
+      }
+      // .every allows to test every condition
+    })
+  }
+
+  document.getElementById('bestScore').innerHTML = `Best: ${bestScore}`;
+  document.getElementById('currentScore').innerHTML = `Current: ${currentScore}`;
+
 
   // to relaunch the animation all the time. It creates a loop
   window.requestAnimationFrame(render);
@@ -108,5 +143,3 @@ document.addEventListener('click', () => gamePlaying = true);
 
 // to make the bird appear when I click and play the game
 window.onclick = () => flight = jump;
-
-
