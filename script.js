@@ -113,7 +113,10 @@ img.onload = render;
 
 // launch the game
 document.addEventListener('click', () => gamePlaying = true);
-document.addEventListener('keyup', () => gamePlaying = true);
+// document.addEventListener('keyup', () => gamePlaying = true);
+// modification from Danny: keydown instead of keyup
+document.addEventListener('keydown', () => gamePlaying = true);
+
 
 window.onclick = () => flight = jump;
 window.onkeyup = () => flight = jump;
