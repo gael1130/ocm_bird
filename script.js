@@ -26,6 +26,7 @@ const pipeLoc = () => (Math.random() * (canvas.height - (pipeGap + pipeWidth) - 
 let index = 0,
     bestScore = 0,
     currentScore = 0,
+    latestScore = 0,
     // array of obstacles
     pipes = [],
     flight,
@@ -34,12 +35,12 @@ let index = 0,
 
 // setup for the beginning of the game
 const setup = () => {
+  latestScore = currentScore;
   currentScore = 0;
   flight = jump;
   flyHeight = (canvas.height / 2) - (size[1] / 2);
 
   pipes = Array(3).fill().map((a, i) => [canvas.width + (i * (pipeGap + pipeWidth)), pipeLoc()]);
-  console.log(pipes);
 }
 
 const render = () => {
@@ -66,6 +67,13 @@ const render = () => {
 
   // write in the canvas
   ctx.fillText(`Best Score: ${bestScore}🍌`, 55, 245);
+
+  // adding the latest score
+  ctx.fillText(`Latest Score: ${latestScore}🍌`, 55, 305);
+
+
+
+
   ctx.fillText(`Click to play`, 48, 535);
   ctx.font = "bold 30px courier";
 
@@ -87,7 +95,6 @@ const render = () => {
 
         // remove pipe + create new pipe
         pipes = [...pipes.slice(1), [pipes[pipes.length-1][0] + pipeGap + pipeWidth, pipeLoc()]];
-        console.log(pipes);
       }
 
       // if hit pipe, end game
